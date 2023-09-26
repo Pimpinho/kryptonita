@@ -37,12 +37,11 @@ int main() {
     scanf("%lu", &p);
     if(!checkprimo(p)) printf("O número digitado não é primo.\n");
 
-    printf("Digite outro número primo q: ");
+    
     scanf("%lu", &q);
     if(!checkprimo(q)) printf("O número digitado não é primo.\n");
     
     // Inserir o expoente e
-    printf("Digite um expoente e relativamente primo a (p-1)(q-1): ");
     scanf("%llu", &e);
 
     // calculo de n
