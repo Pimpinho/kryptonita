@@ -2,16 +2,17 @@
 #include <string.h>
 
 // Função para calcular o modulo exponencial
-unsigned long long int modpow(unsigned long long int base, unsigned long long int exponent, unsigned long long int mod) {
+unsigned long long int modexp(unsigned long long int base, unsigned long long int exp, unsigned long long int mod) {
+    
     unsigned long long int result = 1;
     base = base % mod;
 
-    while (exponent > 0) {
-        if (exponent % 2 == 1)
+    while (exp > 0) {
+        if (exp % 2 == 1)
             result = (result * base) % mod;
 
         base = (base * base) % mod;
-        exponent = exponent / 2;
+        exp = exp / 2;
     }
 
     return result;
@@ -21,8 +22,8 @@ unsigned long long int modpow(unsigned long long int base, unsigned long long in
 void descripascii(unsigned long long int crip[], char str[], int tam, unsigned long long int d, unsigned long long int n) {
     
     for (int i = 0; i < tam; i++) {
-        unsigned long long int decrypted_val = modpow(crip[i], d, n);
-        str[i] = (char)decrypted_val;
+        unsigned long long int val_decrptd = modexp(crip[i], d, n);
+        str[i] = (char)val_decrptd;
     }
 }
 
