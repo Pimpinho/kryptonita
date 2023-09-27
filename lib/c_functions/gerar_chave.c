@@ -28,7 +28,7 @@ unsigned long int checkprimo(unsigned long int n)
 }
 
 int main() {
-
+    
     // Declaração de variáveis
     unsigned long int p, q;
     unsigned long long int e, n, phi;
@@ -70,6 +70,5 @@ int main() {
     fprintf(file, "n: %llu\n", n);
 
     fclose(file);
-
     return 0;
 }
