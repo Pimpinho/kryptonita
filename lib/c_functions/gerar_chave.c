@@ -27,22 +27,10 @@ unsigned long int checkprimo(unsigned long int n)
     return findprimo(n, maiordiv);
 }
 
-int main() {
+void gerar_chave(unsigned long int p, unsigned long int q, unsigned long long int e) {
     
     // Declaração de variáveis
-    unsigned long int p, q;
-    unsigned long long int e, n, phi;
-
-    // Inserir os números primos p e q
-    scanf("%lu", &p);
-    if(!checkprimo(p)) printf("O número digitado não é primo.\n");
-
-    
-    scanf("%lu", &q);
-    if(!checkprimo(q)) printf("O número digitado não é primo.\n");
-    
-    // Inserir o expoente e
-    scanf("%llu", &e);
+    unsigned long long int n, phi;
 
     // calculo de n
     n = (unsigned long long int)p * (unsigned long long int)q;
@@ -53,7 +41,7 @@ int main() {
     // Verifica se o expoente e é relativamente primo a phi
     if (mdc((int)e, phi) != 1) {
         printf("O expoente 'e' não é relativamente primo a (p-1)(q-1).\n");
-        return 1;
+        return;
     }
 
     // Cria o arquivo com a chave pública
@@ -62,7 +50,7 @@ int main() {
 
     if (file == NULL) {
         printf("Erro ao criar o arquivo.\n");
-        return 1;
+        return;
     }
 
     fprintf(file, "Chave Pública:\n");
@@ -70,5 +58,4 @@ int main() {
     fprintf(file, "n: %llu\n", n);
 
     fclose(file);
-    return 0;
 }

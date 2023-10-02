@@ -4,7 +4,7 @@
 #include <math.h>
 
 // Função para verificar se um número é primo
-int checkprimo(int n) {
+int check_primo(int n) {
     if (n < 2) return 0;
     int max_div = (int)sqrt(n);
     for (int i = 2; i <= max_div; i++) {
@@ -19,11 +19,11 @@ int primo_aleat(int min, int max) {
     int num;
     do {
         num = rand() % (max - min + 1) + min;
-    } while (!checkprimo(num));
+    } while (!check_primo(num));
     return num;
 }
 
-int main() {
+void gerar_dois_primos() {
 
     // Inicializar o gerador de números aleatórios
     srand(time(NULL));
@@ -35,6 +35,4 @@ int main() {
     // Imprimir os números primos gerados
     printf("Número primo 1: %d\n", primo1);
     printf("Número primo 2: %d\n", primo2);
-
-    return 0;
 }

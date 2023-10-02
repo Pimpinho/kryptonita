@@ -1,48 +1,46 @@
 import tkinter as tk
+import os
+import ctypes
+from tkinter import StringVar, IntVar
+from PIL import Image, ImageTk
+from lib_wrapper import gerar_chave, encriptar, desencriptar
 
-class App:
+class KryptoApp:
     def __init__(self, master):
         self.master = master
-        self.master.title("Meu Aplicativo")
-        self.master.geometry("600x600")  # Define o tamanho da janela principal para 600x600
-        self.init_ui()
+        self.master.title("Krypto App")
+        self.master.geometry("700x450")  # Define o tamanho da janela principal para 700x450
 
-    def init_ui(self):
-        # Crie um frame para conter os botões e centralizá-los
-        button_frame = tk.Frame(self.master)
-        button_frame.pack(expand=True, fill=tk.BOTH)
+        # Carregue a imagem do ícone
+        icon_path = "icons/logo_k_semfundo.png"
+        if os.path.exists(icon_path):
+            icon = Image.open(icon_path)
+            icon = icon.convert("RGBA")
+            self.icon = ImageTk.PhotoImage(icon)
 
-        # Configure o frame para centralizar os widgets horizontalmente e adicionar espaçamento
-        button_frame.grid_rowconfigure(0, weight=1)
-        button_frame.grid_columnconfigure(0, weight=1)
-        button_frame.grid_columnconfigure(1, weight=1)
-        button_frame.grid_columnconfigure(2, weight=1)
+            # Defina o ícone da janela
+            self.master.iconphoto(True, self.icon)
 
-        self.button1 = tk.Button(button_frame, text="Tela 1", command=lambda: self.show_screen("Tela 1", "Criptografar"))
-        self.button1.grid(row=0, column=0, padx=10, pady=10)
+        self.create_main_frame()
+        
+    def create_main_frame(self):
+        main_frame = tk.Frame(self.master, width=700, height=450)
+        main_frame.pack()
 
-        self.button2 = tk.Button(button_frame, text="Tela 2", command=lambda: self.show_screen("Tela 2", "Gerar chave pública"))
-        self.button2.grid(row=0, column=1, padx=10, pady=10)
+        title_label = tk.Label(main_frame, text="Krypto App", font=("Inter", 28, "bold"), anchor="center", fg='black')
+        title_label.place(x=146, y=37)
 
-        self.button3 = tk.Button(button_frame, text="Tela 3", command=lambda: self.show_screen("Tela 3", "Decriptografar"))
-        self.button3.grid(row=0, column=2, padx=10, pady=10)
+        button1 = self.create_button(main_frame, "Chave pública", self.show_generate_public_key_screen)
+        button1.place(x=263, y=202, width=174, height=47)
 
-    def show_screen(self, screen_title, screen_label):
-        # Limpa a tela anterior (se houver) antes de exibir a nova tela
-        self.clear_screen()
+        button2 = self.create_button(main_frame, "Encriptar", self.show_generate_encrypt_screen)
+        button2.place(x=49, y=202, width=174, height=47)
 
-        # Configura o título da janela
-        self.master.title(screen_title)
+        button3 = self.create_button(main_frame, "Desencriptar", self.show_generate_decrypt_screen)
+        button3.place(x=477, y=202, width=174, height=47)
 
-        # Cria e exibe os elementos da nova tela
-        self.label = tk.Label(self.master, text=screen_label)
-        self.label.pack()
-
-        # Adicione aqui quaisquer outros elementos que você deseja na tela
-
-        # Adicione um botão "Voltar à tela inicial"
-        self.button_back = tk.Button(self.master, text="Voltar à tela inicial", command=self.show_initial_screen)
-        self.button_back.pack()
+    def create_button(self, parent, text, command):
+        return tk.Button(parent, text=text, command=command)
 
     def clear_screen(self):
         # Limpa os elementos da tela anterior
@@ -50,11 +48,92 @@ class App:
             widget.destroy()
 
     def show_initial_screen(self):
-        # Função para voltar à tela inicial
         self.clear_screen()
-        self.master.title("Meu Aplicativo")  # Restaura o título original
-        self.init_ui()  # Recria os botões iniciais
+        self.master.title("Krypto App")
+        self.create_main_frame()
 
-root = tk.Tk()
-app = App(root)
-root.mainloop()
+    def show_generate_public_key_screen(self):
+        self.clear_screen()
+        self.master.title("Tela 1 - Gerar chave pública")
+
+        title_label = tk.Label(self.master, text="Gerar chave pública", font=("Inter", 16, "bold"), fg="black")
+        title_label.place(x=280, y=20)
+
+        self.q_var = IntVar()
+        self.p_var = IntVar()
+        self.expoente_var = IntVar()
+
+        self.create_input_field("Entre com o valor de q:", 100, 200, self.q_var)
+        self.create_input_field("Entre com o valor de p:", 100, 260, self.p_var)
+        self.create_input_field("Entre com o valor do expoente:", 100, 320, self.expoente_var)
+
+        # Chame a função gerar_chave e obtenha o resultado
+        button_save = self.create_button(self.master, "Salvar Dados", lambda: gerar_chave(self.q_var.get(), self.p_var.get(), self.expoente_var.get()))
+        button_save.place(x=450, y=400)
+
+        button_back = self.create_button(self.master, "Voltar à tela inicial", self.show_initial_screen)
+        button_back.place(x=300, y=400)
+
+    def create_input_field(self, label_text, x, y, text_variable):
+        label = tk.Label(self.master, text=label_text, font=("Inter", 12, "bold"), fg="black")
+        label.place(x=x, y=y)
+
+        entry = tk.Entry(self.master, textvariable=text_variable)
+        entry.place(x=x, y=y + 30)
+    
+    def string_to_array(self, text):
+        text_arr = []
+        for letra in text:
+            text_arr.append(letra)
+        return text_arr
+        
+
+    def show_generate_encrypt_screen(self):
+        self.clear_screen()
+        self.master.title("Tela 2 - Criptografar")
+
+        title_label = tk.Label(self.master, text="Gerar criptografia", font=("Inter", 16, "bold"), fg="black")
+        title_label.place(x=280, y=20)
+
+        self.texto = StringVar()
+        self.expoente_var = IntVar()
+        self.n_var = IntVar()
+
+        self.create_input_field("Entre com o texto:", 100, 200, self.texto)
+        self.create_input_field("Entre com o valor do expoente:", 100, 260, self.expoente_var)
+        self.create_input_field("Entre com o valor do n:", 100, 320, self.n_var)
+
+        def save_data():
+            texto_inserido = self.texto.get()
+            texto_c_char_p = ctypes.c_char_p(texto_inserido.encode())
+            encriptar(texto_c_char_p, self.expoente_var.get(), self.n_var.get())
+
+        button_save = self.create_button(self.master, "Salvar Dados", save_data)
+        button_save.place(x=450, y=400)
+        button_back = self.create_button(self.master, "Voltar à tela inicial", self.show_initial_screen)
+        button_back.place(x=300, y=400)
+
+    def show_generate_decrypt_screen(self):
+        self.clear_screen()
+        self.master.title("Tela 3 - Decriptografar")
+
+        title_label = tk.Label(self.master, text="Desencriptar", font=("Inter", 16, "bold"), fg="black")
+        title_label.place(x=280, y=20)
+
+        self.q_var = IntVar()
+        self.p_var = IntVar()
+        self.expoente_var = IntVar()
+
+        self.create_input_field("Entre com o valor de q:", 100, 200, self.q_var)
+        self.create_input_field("Entre com o valor de p:", 100, 260, self.p_var)
+        self.create_input_field("Entre com o valor do expoente:", 100, 320, self.expoente_var)
+
+        button_save = self.create_button(self.master, "Salvar Dados", lambda: desencriptar(self.q_var.get(), self.p_var.get(), self.expoente_var.get()))
+        button_save.place(x=450, y=400)
+        button_back = self.create_button(self.master, "Voltar à tela inicial", self.show_initial_screen)
+        button_back.place(x=300, y=400)
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = KryptoApp(root)
+    root.mainloop()

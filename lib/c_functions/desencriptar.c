@@ -28,7 +28,7 @@ void descripascii(unsigned long long int crip[], char str[], int tam, unsigned l
 }
 
 // Função final para desencriptar a mensagem
-void desencriptar(){
+void desencriptar(long long p, long long q, long long e){
 
     // Abrir os arquivos
     FILE *desencriptada;
@@ -41,11 +41,7 @@ void desencriptar(){
     encriptada = fopen("mensagem_criptografada.txt", "r");
 
     /// Declaração de variáveis
-    long long phi, e, p, q, n;
-
-    // Inserir a chave privada
-    printf("Insira p , q, e):\n");
-    scanf("%lld %lld %lld", &p, &q, &e);
+    long long phi, n;
 
     // Calculo de n e phi
     phi = (p - 1) * (q - 1);
@@ -73,9 +69,4 @@ void desencriptar(){
 
     fclose(desencriptada);
     fclose(encriptada);
-}
-
-int main() {
-    desencriptar();
-    return 0;
 }

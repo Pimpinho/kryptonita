@@ -3,7 +3,7 @@
 #include <ctype.h>
 
 // Exponenciação modular
-unsigned long long int modexp(unsigned long long int base, unsigned long long int exp, unsigned long long int mod) {
+unsigned long long int mode_xp(unsigned long long int base, unsigned long long int exp, unsigned long long int mod) {
     
     unsigned long long int result = 1;
     base = base % mod;
@@ -21,32 +21,22 @@ unsigned long long int modexp(unsigned long long int base, unsigned long long in
 }
 
 // Função para criptografar a mensagem
-void criptoasc(char str[], unsigned long long int nva_str[], unsigned long long int tam, unsigned long long int e, unsigned long long int n) {
-   
+void criptoasc(const char str[], unsigned long long int nva_str[], unsigned long long int tam, unsigned long long int e, unsigned long long int n) {
     for (int i = 0; i < tam; i++) {
         int ascii_val = (int)str[i]; 
-        nva_str[i] = modexp(ascii_val, e, n); 
+        nva_str[i] = mode_xp(ascii_val, e, n); 
     }
 }
 
 // Função final para encriptar a mensagem
-void encriptar(){
-
+void encriptar(const char *str, unsigned long long int e, unsigned long long int n){
     // Declaração de variáveis
-    unsigned long long int e, n;
     FILE *destino;
     destino = fopen("mensagem_criptografada.txt", "w");
-    char str[99999];
-
-    // Inserir a mensagem e a chave pública
-    printf("Insira a mensagem que deseja criptografar: \n");
-    scanf(" %[^\n]", str);
-    printf("Insira a chave pública 'e' e 'n': \n");
-    scanf("%lld %lld", &e, &n);
 
     // Criptografar a mensagem
-    int tam = strlen(str);
-    unsigned long long int crip[tam];
+    unsigned long long int tam = strlen(str);
+    unsigned long long int crip[tam], i;
 
     criptoasc(str, crip, tam, e, n);
 
@@ -55,10 +45,4 @@ void encriptar(){
         fprintf(destino, "%lld ", crip[i]);
     }
     fclose(destino);
-}
-
-int main() {
-    encriptar();
-    return 0;
-
 }
